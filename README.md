@@ -23,6 +23,26 @@ To ensure a high-fidelity analysis, I implemented several advanced data reconcil
 
 ---
 
+## Production Database Integration
+The project now runs on a robust **PostgreSQL** backend with a modular Python codebase (`src/`).
+
+### Key Features
+*   **Strict Schema:** Enforced via SQLAlchemy ORM (`src/models.py`) to ensure data integrity.
+*   **Time-Series Tracking:** Records are appended with a `snapshot_date`, enabling historical analysis of price/rank changes over time.
+*   **Modular Architecture:** Cleaning and connection logic is decoupled from the notebook.
+
+### Setup Instructions
+1. **Configure Environment:** Copy `.env.example` to `.env` and set your credentials.
+2. **Install Dependencies:** `pip install -r requirements.txt`.
+3. **Migrate & Append:** Run the ETL script to clean and upload data. This script is idempotent and handles daily snapshots automatically.
+   ```bash
+   python migrate_in.py
+   ```
+4. **Run Analysis:** The `analysis.ipynb` connects via the new `src.db` module to fetch the latest snapshot vs historical trends.
+
+---
+
+
 ## Phase 1: Exploratory Data Analysis (EDA)
 
 ### 1. The "Long Tail" of E-commerce
@@ -87,3 +107,6 @@ The final parity plot shows high symmetry and a strong diagonal trend, proving t
 * **Scikit-Learn** (Random Forest, Model Evaluation)
 * **Visualisation:** Seaborn, Matplotlib
 * **Data Auditing:** Regular Expressions (re)
+* **Database:** PostgreSQL, SQLAlchemy (ORM)
+* **Architecture:** Modular Python (`src/`), Time-Series Data Design
+
