@@ -49,7 +49,10 @@ def clean_sales_data(df: pd.DataFrame) -> pd.DataFrame:
 
     # 4. Clean Buy Box
     if 'buy_box_availability' in df.columns:
-        df['has_buy_box'] = df['buy_box_availability'].fillna('No Add to Cart') == 'Add to cart'
+        # Standardise to Yes/No
+        df['buy_box_availability'] = df['buy_box_availability'].fillna('No').replace({'Add to cart': 'Yes'})
+        # Create boolean flag
+        df['has_buy_box'] = df['buy_box_availability'] == 'Yes'
         
     # 5. Encode 'is_sponsored'
     if 'is_sponsored' in df.columns:
