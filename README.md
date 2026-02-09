@@ -29,7 +29,7 @@ The project now runs on a robust **PostgreSQL** backend with a modular Python co
 ### Key Features
 *   **Strict Schema:** Enforced via SQLAlchemy ORM (`src/models.py`) to ensure data integrity.
 *   **Time-Series Tracking:** Records are appended with a `snapshot_date`, enabling historical analysis of price/rank changes over time.
-*   **Modular Architecture:** Cleaning and connection logic is decoupled from the notebook.
+*   **Centralised Data Engineering:** All feature engineering (imputation, regex extraction, binning) is performed during ingestion (`migrate_in.py`), ensuring that Power BI and Python Notebooks consume the exact same "rich" dataset.
 
 ### Setup Instructions
 1. **Configure Environment:** Copy `.env.example` to `.env` and set your credentials.
@@ -39,6 +39,24 @@ The project now runs on a robust **PostgreSQL** backend with a modular Python co
    python migrate_in.py
    ```
 4. **Run Analysis:** The `analysis.ipynb` connects via the new `src.db` module to fetch the latest snapshot vs historical trends.
+
+### Power BI Dashboard
+The repository includes an interactive dashboard (`PBIX/amz-market-intel.pbix`) for visualising market insights.
+
+![Power BI Dashboard](https://raw.githubusercontent.com/christian-camille/amz-market-intel/main/PBIX/screenshot%200.png)
+
+**Prerequisites:**
+*   **Power BI Desktop** (Windows)
+*   **PostgreSQL** (running locally)
+
+**Running the Dashboard:**
+1.  **Seed Database:** Ensure you have run `python migrate_in.py` successfully. This populates your local PostgreSQL instance with the cleaned data required by Power BI.
+2.  **Open File:** Launch `PBIX/amz-market-intel.pbix`.
+3.  **Data Source:**
+    *   The file is configured to connect to `localhost`.
+    *   If prompted, enter your local PostgreSQL credentials (as defined in your `.env`).
+    *   To change connection settings (e.g., port or database name), go to:  
+        `Home > Transform Data > Data Source Settings`.
 
 ---
 
