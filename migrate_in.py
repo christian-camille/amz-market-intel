@@ -3,6 +3,7 @@ import os
 from datetime import date
 from src.db import engine, Base
 from src.models import AmazonSales
+from src.cleaning import clean_sales_data
 from sqlalchemy.orm import Session
 
 def migrate():
@@ -24,20 +25,19 @@ def migrate():
     print(f"Reading data from {csv_path}...")
     df = pd.read_csv(csv_path)
     
-    # Clean Column Names to match Model attributes
     df.columns = [c.lower().replace(" ", "_") for c in df.columns]
     
-    # Add Snapshot Date (Time-Series key)
+    print("Applying data cleaning...")
+    df = clean_sales_data(df)
+    
     today = date.today()
     df['snapshot_date'] = today
     
-    # Filter for columns that exist in the Model
     model_columns = [c.name for c in AmazonSales.__table__.columns if c.name != 'id']
     df_to_upload = df[df.columns.intersection(model_columns)]
 
     print(f"Uploading {len(df_to_upload)} rows for snapshot date: {today}...")
     
-    # Upload using 'append' to preserve history
     try:
         with Session(engine) as session:
             rows_deleted = session.query(AmazonSales).filter(AmazonSales.snapshot_date == today).delete()
